@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
 import { CartContext } from '../context/CartContext';
-import './styles/Cart.css';
 import { useNavigate } from 'react-router';
+import Header from './Header';
+import './styles/Cart.css';
 
 function Cart() {
   const { cart, setCart, removeFromCart } = useContext(CartContext);
@@ -23,13 +24,14 @@ function Cart() {
 
   return (
     <div className="cart-container">
+      <Header />
       <h1 className="cart-header">Your Shopping Cart</h1>
       {cart.length > 0 ? (
         <>
           {cart.map((item) => (
             <div className="cart-item" key={item._id}>
               <img
-                src={item.image || 'https://via.placeholder.com/80'}
+                src={`http://localhost:5000${item.image}`}
                 alt={item.name}
               />
               <div className="cart-item-details">
@@ -37,7 +39,7 @@ function Cart() {
                 <div className="cart-item-price">Price: ${item.price}</div>
                 <div className="quantity-controls">
                   <button onClick={() => updateQuantity(item._id, -1)}>-</button>
-                  <span style={{ margin: '0 10px' }}>{item.quantity}</span>
+                  <span>{item.quantity}</span>
                   <button onClick={() => updateQuantity(item._id, 1)}>+</button>
                 </div>
                 <div className="cart-item-subtotal">
@@ -52,14 +54,11 @@ function Cart() {
               </button>
             </div>
           ))}
-
           <div className="cart-total">Total: ${calculateTotal().toFixed(2)}</div>
-
           <div className="cart-actions">
-            <button className="clear-cart" onClick={() => setCart([])}>
-              Clear Cart
-            </button>
-            <button className="checkout" onClick={()=>navigate('/checkout')}>Checkout</button>
+            <button style={{backgroundColor:'blue',color:'white'}} onClick={() => navigate('/user-dashboard')}>Continue Shopping</button>
+            <button style={{backgroundColor:'red', color:'white'}} onClick={() => setCart([])}>Clear Cart</button>
+            <button style={{backgroundColor:'green',color:'white'}} onClick={() => navigate('/checkout')}>Checkout</button>
           </div>
         </>
       ) : (

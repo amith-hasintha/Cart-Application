@@ -8,6 +8,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
+    
 }
 
 /* Container for form and image */
@@ -18,10 +19,10 @@
     align-items: center;
     background: rgb(209, 209, 209);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 25px;
+    border-radius: 15px;
     overflow: hidden;
-    width: 50%; 
-    max-width: 1200px; 
+    width: 40%; 
+    max-width: 1000px; 
     height: 90%; 
 }
 
@@ -86,7 +87,7 @@
 
 /* Submit button */
 .form button {
-    background-color: #08eb5f;
+    background-color: #1fc35e;
     color: white;
     border: none;
     padding: 1rem; 

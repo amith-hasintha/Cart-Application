@@ -1,127 +1,123 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { CartContext } from '../context/CartContext';
-import { Link } from 'react-router-dom';
+import Header from './Header';
+import './styles/UserDashboard.css';
+import './styles/Header.css';
 
 function UserDashboard() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]); 
+  const [allProducts, setAllProducts] = useState([]); 
   const [searchQuery, setSearchQuery] = useState('');
-  const [category, setCategory] = useState('');
-  const [quantities, setQuantities] = useState({}); // Track quantities for each product
-  const { addToCart } = useContext(CartContext);
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+  const { cart, addToCart } = useContext(CartContext);
 
-  // Debounce searchQuery to reduce API calls
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 300); // Adjust debounce delay as needed
+  // State to track individual product quantities
+  const [tempQuantities, setTempQuantities] = useState({});
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchQuery]);
-
-  // Fetch products whenever debouncedSearchQuery or category changes
+  // Fetch products from backend on app load
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/products', {
-          params: {
-            search: debouncedSearchQuery,
-            category: category,
-          },
-        });
+        const response = await axios.get('http://localhost:5000/api/products');
         setProducts(response.data);
+        setAllProducts(response.data);
+
+        // Initialize tempQuantities with 1 for every product
+        const initialQuantities = {};
+        response.data.forEach(product => {
+          initialQuantities[product._id] = 1; // Default starting quantity is 1
+        });
+        setTempQuantities(initialQuantities);
       } catch (error) {
         console.error('Error fetching products:', error);
       }
     };
-    fetchProducts();
-  }, [debouncedSearchQuery, category]);
 
-  const handleQuantityChange = (productId, quantity) => {
-    setQuantities((prev) => ({
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    if (searchQuery === '') {
+      setProducts(allProducts);
+    } else {
+      const filteredProducts = allProducts.filter(product =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setProducts(filteredProducts);
+    }
+  }, [searchQuery, allProducts]);
+
+  const handleIncreaseQuantity = (productId) => {
+    setTempQuantities(prev => ({
       ...prev,
-      [productId]: quantity,
+      [productId]: prev[productId] + 1,
+    }));
+  };
+
+  const handleDecreaseQuantity = (productId) => {
+    setTempQuantities(prev => ({
+      ...prev,
+      [productId]: Math.max(prev[productId] - 1, 1), // Prevent going below 1
     }));
   };
 
   const handleAddToCart = (product) => {
-    const quantity = quantities[product._id] || 1; // Default to 1 if no selection
-    addToCart({ ...product, quantity });
-    alert(`${product.name} (Quantity: ${quantity}) added to cart`);
+    addToCart({ ...product, quantity: tempQuantities[product._id] });
+    alert(`${product.name} with quantity ${tempQuantities[product._id]} added to cart`);
   };
+
+  const calculateCartSummary = () => {
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const totalAmount = cart.reduce((sum, item) => sum + item.quantity * item.price, 0);
+    return { totalItems, totalAmount };
+  };
+
+  const { totalItems } = calculateCartSummary();
 
   return (
     <div className="App">
-      <Link to={'/cart'}>
-        <button>Cart</button>
-      </Link>
-      <h1>Product Dashboard</h1>
+      <Header totalItems={totalItems} />
 
-      {/* Search & Filter UI */}
-      <div>
+      <div className="search-bar">
         <input
           type="text"
-          placeholder="Search products"
+          placeholder="Search products by name..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <select onChange={(e) => setCategory(e.target.value)} value={category}>
-          <option value="">Select Category</option>
-          <option value="electronics">Electronics</option>
-          <option value="furniture">Furniture</option>
-          <option value="clothing">Clothing</option>
-        </select>
       </div>
-
-      {/* Product List */}
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+      
+      <div className="product-grid">
         {products.length > 0 ? (
           products.map((product) => (
-            <div
-              key={product._id}
-              style={{
-                margin: '10px',
-                border: '1px solid #ddd',
-                padding: '10px',
-                textAlign: 'center',
-                width: '200px',
-              }}
-            >
+            <div className="product-card" key={product._id}>
               <img
                 src={`http://localhost:5000${product.image}`}
                 alt={product.name}
-                style={{ width: '100px', height: '100px', objectFit: 'cover' }}
               />
               <h3>{product.name}</h3>
               <p>{product.description}</p>
-              <p>${product.price}</p>
-              {/* Quantity Selector */}
-              <input
-                type="number"
-                min="1"
-                value={quantities[product._id] || 1}
-                onChange={(e) =>
-                  handleQuantityChange(product._id, parseInt(e.target.value, 10))
-                }
-                style={{ marginBottom: '10px', width: '100%' }}
-              />
-              <button
-                onClick={() => handleAddToCart(product)}
-                style={{
-                  backgroundColor: '#28a745',
-                  color: '#fff',
-                  padding: '5px 10px',
-                }}
-              >
-                Add to Cart
-              </button>
+              <p className="price">${product.price}</p>
+              <div className="quantity-controls">
+                <button
+                  style={{ backgroundColor: 'black', color: 'white' }}
+                  onClick={() => handleDecreaseQuantity(product._id)}
+                >
+                  -
+                </button>
+                <span>{tempQuantities[product._id] || 1}</span>
+                <button
+                  style={{ backgroundColor: 'black', color: 'white' }}
+                  onClick={() => handleIncreaseQuantity(product._id)}
+                >
+                  +
+                </button>
+              </div>
+              <button onClick={() => handleAddToCart(product)}>Add to Cart</button>
             </div>
           ))
         ) : (
-          <p>No products found matching your criteria</p>
+          <p>No products found</p>
         )}
       </div>
     </div>
