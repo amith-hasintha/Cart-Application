@@ -1,0 +1,115 @@
+
+/* Main container */
+.add-product-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Title Section */
+.add-product-title {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Error and Success Messages */
+.error-message {
+  color: #e74c3c;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.success-message {
+  color: #2ecc71;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+/* Form Styling */
+.add-product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+/* Input and textarea styles */
+.add-product-input,
+.add-product-textarea {
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.add-product-input:focus,
+.add-product-textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Textarea */
+.add-product-textarea {
+  height: 100px;
+}
+
+/* File input */
+.add-product-input[type="file"] {
+  border: none;
+}
+
+/* Submit button */
+.add-product-button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-product-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .add-product-container {
+    padding: 15px;
+  }
+
+  .add-product-form {
+    gap: 10px;
+  }
+
+  .add-product-button {
+    font-size: 14px;
+  }
+
+  .add-product-textarea {
+    height: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-product-container {
+    padding: 10px;
+  }
+
+  .add-product-title {
+    font-size: 18px;
+  }
+
+  .add-product-button {
+    padding: 8px;
+  }
+}
