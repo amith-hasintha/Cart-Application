@@ -20,7 +20,7 @@ const Header = ({ totalItems = 0 }) => {
           <img src={cartImage} alt="Cart" />
           <span>({totalItems})</span>
         </Link>
-        <button onClick={handleLogout}>Logout</button>
+        <button className='lgbutton' onClick={handleLogout}>Logout</button>
       </div>
     </header>
   );

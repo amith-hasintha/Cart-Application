@@ -76,6 +76,17 @@
     height: 24px;
     margin-right: 8px;
   }
+  .lgbutton{
+    background-color: #f81505;
+    color: #efefef;
+    border: none;
+    padding: 10px 10px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+  }
   
   /* Mobile responsiveness */
   @media (max-width: 768px) {
